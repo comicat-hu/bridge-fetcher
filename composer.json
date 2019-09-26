@@ -10,6 +10,7 @@
     "require": {
         "php-http/curl-client": "^1.7",
         "guzzlehttp/psr7": "^1.6",
-        "jolicode/slack-php-api": "^2.0"
+        "jolicode/slack-php-api": "^2.0",
+        "vlucas/phpdotenv": "^3.6"
     }
 }
