@@ -6,6 +6,7 @@
             "email": "senline39518@gmail.com"
         }
     ],
+    "description": "fetch bridge data and send",
     "require": {
         "php-http/curl-client": "^1.7",
         "guzzlehttp/psr7": "^1.6",
