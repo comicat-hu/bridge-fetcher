@@ -1,0 +1,11 @@
+{
+    "name": "comicat-hu/bridge-fetcher",
+    "authors": [
+        {
+            "name": "comicat-hu",
+            "email": "senline39518@gmail.com"
+        }
+    ],
+    "require": {
+    }
+}
