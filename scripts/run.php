@@ -41,7 +41,7 @@ function postMessage(string $content)
     ]);
 
     if (!$response->getOk()) {
-        putLog('Failed post messages.');
+        putLog('***Failed post messages***');
         putLog(json_encode($response));
     }
 }
@@ -58,24 +58,30 @@ function getRecentFetchTime() {
     }
 }
 
-$followList = explode(',', getEnv('FOLLOW_LIST'));
+try {
 
-$mainUrl = getEnv('BRIDGE_MAIN_URL');
+    $followList = explode(',', getEnv('FOLLOW_LIST'));
 
-foreach ($followList as $username) {
-    $target = $mainUrl . $username;
-    $content = json_decode(file_get_contents($target));
-    $items = $content->items;
-    $contents = [];
-    foreach ($items as $index => $item) {
-        $dateModified = $item->date_modified;
-        if (strtotime($dateModified) > getRecentFetchTime()) {
-            $contents[] = $item->url;
+    $mainUrl = getEnv('BRIDGE_MAIN_URL');
+
+    foreach ($followList as $username) {
+        $target = $mainUrl . $username;
+        $content = json_decode(file_get_contents($target));
+        $items = $content->items;
+        $contents = [];
+        foreach ($items as $index => $item) {
+            $dateModified = $item->date_modified;
+            if (strtotime($dateModified) > getRecentFetchTime()) {
+                $contents[] = $item->url;
+            }
+        }
+        if (!empty($contents)) {
+            postMessage(implode("\n", $contents));
         }
     }
-    if (!empty($contents)) {
-        postMessage(implode("\n", $contents));
-    }
-}
 
-setRecentFetchTime();
+    setRecentFetchTime();
+} catch (Exception $e) {
+    putLog('***Script failed***');
+    putLog($e->getMessage());
+}
