@@ -48,6 +48,7 @@ function postMessage(string $content)
 
 function setRecentFetchTime() {
     file_put_contents(RECENT_FETCH_TIME_TMP, time());
+    putlog('set recent fetch time complete.');
 }
 
 function getRecentFetchTime() {
@@ -59,29 +60,33 @@ function getRecentFetchTime() {
 }
 
 try {
+    putLog("== Script begin ==");
 
     $followList = explode(',', getEnv('FOLLOW_LIST'));
 
     $mainUrl = getEnv('BRIDGE_MAIN_URL');
 
+    $messageCount = 0;
     foreach ($followList as $username) {
         $target = $mainUrl . $username;
         $content = json_decode(file_get_contents($target));
-        $items = $content->items;
-        $contents = [];
-        foreach ($items as $index => $item) {
+        foreach ($content->items as $item) {
             $dateModified = $item->date_modified;
             if (strtotime($dateModified) > getRecentFetchTime()) {
-                $contents[] = $item->url;
+                postMessage($item->url);
+                $messageCount++;
+                sleep(2);
             }
         }
-        if (!empty($contents)) {
-            postMessage(implode("\n", $contents));
-        }
     }
-
+    putLog("send $messageCount messages totally.");
+} catch (Exception $ex) {
+    putLog('***Script failed with exception***');
+    putLog($ex->getMessage());
+} catch (Error $err) {
+    putLog('***Script failed with error***');
+    putLog($err->getMessage());
+} finally {
     setRecentFetchTime();
-} catch (Exception $e) {
-    putLog('***Script failed***');
-    putLog($e->getMessage());
+    putLog("== Script end ==");
 }
