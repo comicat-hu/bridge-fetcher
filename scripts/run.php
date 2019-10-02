@@ -73,8 +73,16 @@ try {
         foreach ($content->items as $item) {
             $dateModified = $item->date_modified;
             if (strtotime($dateModified) > getRecentFetchTime()) {
-                postMessage($item->url);
-                $messageCount++;
+                $msg = $item->url;
+                if (!is_null($msg)) {
+                    putLog($item->url);
+                    postMessage($item->url);
+                    $messageCount++;
+                } else {
+                    putLog('***message null***');
+                    putLog(json_encode($item));
+                }
+
                 sleep(2);
             }
         }
