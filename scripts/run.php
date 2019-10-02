@@ -65,18 +65,20 @@ try {
     $followList = explode(',', getEnv('FOLLOW_LIST'));
 
     $mainUrl = getEnv('BRIDGE_MAIN_URL');
+    $maxRecentPosts = getEnv('MAX_RECENT_POSTS');
 
     $messageCount = 0;
     foreach ($followList as $username) {
         $target = $mainUrl . $username;
         $content = json_decode(file_get_contents($target));
+        $postsCount = 0;
         foreach ($content->items as $item) {
-            $dateModified = $item->date_modified;
-            if (strtotime($dateModified) > getRecentFetchTime()) {
+            if ($postsCount < $maxRecentPosts && strtotime($item->date_modified) > getRecentFetchTime()) {
                 $msg = $item->url;
                 if (!is_null($msg)) {
                     putLog($item->url);
                     postMessage($item->url);
+                    $postsCount++;
                     $messageCount++;
                 } else {
                     putLog('***message null***');
