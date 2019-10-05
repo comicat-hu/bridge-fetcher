@@ -76,7 +76,7 @@ try {
             if ($postsCount < $maxRecentPosts && strtotime($item->date_modified) > getRecentFetchTime()) {
                 $msg = $item->url;
                 if (!is_null($msg)) {
-                    putLog($item->url);
+                    putLog($item->url . " ($username)");
                     postMessage($item->url);
                     $postsCount++;
                     $messageCount++;
