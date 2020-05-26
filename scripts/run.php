@@ -62,11 +62,20 @@ function createBlocks($item)
         if ($attachment->mime_type == 'image/jpeg') {
             $blocks[] = [
                 'type' => 'image',
+                'title' => [
+                    'type' => 'plain_text',
+                    'text' => $item->title,
+                    "emoji" => true
+                ],
                 'image_url' => $attachment->url,
                 'alt_text' => $item->url
             ];
         }
     }
+
+    $blocks[] = [
+        'type' => 'divider'
+    ];
 
     return $blocks;
 }
