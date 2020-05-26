@@ -28,15 +28,16 @@ function putLog(string $log='')
     );	
 }
 
-function postMessage(string $content)
+function postMessage($item)
 {
     $client = ClientFactory::create(getEnv('SLACK_TOKEN'));
     $response = $client->chatPostMessage([
         'username' => getEnv('SLACK_USERNAME'),
         'channel' => getEnv('SLACK_CHANNEL_ID'),
-        'text' => $content,
-        'unfurl_links' => true,
-        'icon_emoji' => getEnv('SLACK_ICON_EMOJI')
+        'text' => $item->url, // 有blocks時，text會轉成只出現在通知文字
+        'unfurl_links' => false,
+        'icon_emoji' => getEnv('SLACK_ICON_EMOJI'),
+        'blocks' => json_encode(createBlocks($item))
 
     ]);
 
@@ -44,6 +45,30 @@ function postMessage(string $content)
         putLog('***Failed post messages***');
         putLog(json_encode($response));
     }
+}
+
+function createBlocks($item)
+{
+    $blocks = [];
+    $blocks[] = [
+        'type' => 'section',
+        'text' => [
+            'type' => 'mrkdwn',
+            'text' => "<{$item->url}>"
+        ]
+    ];
+
+    foreach ($item->attachments as $attachment) {
+        if ($attachment->mime_type == 'image/jpeg') {
+            $blocks[] = [
+                'type' => 'image',
+                'image_url' => $attachment->url,
+                'alt_text' => $item->url
+            ];
+        }
+    }
+
+    return $blocks;
 }
 
 function setRecentFetchTime() {
@@ -74,14 +99,13 @@ try {
         $postsCount = 0;
         foreach ($content->items as $item) {
             if ($postsCount < $maxRecentPosts && strtotime($item->date_modified) > getRecentFetchTime()) {
-                $msg = $item->url;
-                if (!is_null($msg)) {
+                if (!empty($item)) {
                     putLog($item->url . " ($username)");
-                    postMessage($item->url);
+                    postMessage($item);
                     $postsCount++;
                     $messageCount++;
                 } else {
-                    putLog('***message null***');
+                    putLog("***item null from '{$content->feed_url}'***");
                     putLog(json_encode($item));
                 }
 
