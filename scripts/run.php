@@ -68,11 +68,11 @@ function createBlocks($item)
             'type' => 'image',
             'title' => [
                 'type' => 'plain_text',
-                'text' => $item->title,
+                'text' => "@{$item->author->name}",
                 "emoji" => true
             ],
             'image_url' => $attachment->url,
-            'alt_text' => $item->url
+            'alt_text' => "{$item->url} ({$item->author->name})"
         ];
     }
 
