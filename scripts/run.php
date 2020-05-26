@@ -106,20 +106,24 @@ try {
         $target = $mainUrl . $username;
         $content = json_decode(file_get_contents($target));
         $postsCount = 0;
-        foreach ($content->items as $item) {
-            if ($postsCount < $maxRecentPosts && strtotime($item->date_modified) > getRecentFetchTime()) {
-                if (!empty($item)) {
-                    putLog($item->url . " ($username)");
-                    postMessage($item);
-                    $postsCount++;
-                    $messageCount++;
-                } else {
-                    putLog("***item null from '{$content->feed_url}'***");
-                    putLog(json_encode($item));
-                }
+        if (!empty($content->items)) {
+            foreach ($content->items as $item) {
+                if ($postsCount < $maxRecentPosts && strtotime($item->date_modified) > getRecentFetchTime()) {
+                    if (!empty($item)) {
+                        putLog($item->url . " ($username)");
+                        postMessage($item);
+                        $postsCount++;
+                        $messageCount++;
+                    } else {
+                        putLog("***item null from '{$content->feed_url}'***");
+                        putLog(json_encode($item));
+                    }
 
-                sleep(2);
+                    sleep(2);
+                }
             }
+        } else {
+            putLog("***empty content from '{$target}'***");
         }
     }
     putLog("send $messageCount messages totally.");
