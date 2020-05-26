@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . './utils.php';
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -59,20 +60,23 @@ function createBlocks($item)
     ];
 
     foreach ($item->attachments as $attachment) {
-        if ($attachment->mime_type == 'image/jpeg') {
-            $blocks[] = [
-                'type' => 'image',
-                'title' => [
-                    'type' => 'plain_text',
-                    'text' => $item->title,
-                    "emoji" => true
-                ],
-                'image_url' => $attachment->url,
-                'alt_text' => $item->url
-            ];
+        if ($attachment->mime_type == 'application/octet-stream') {
+            $attachment->url = getLastUrl($attachment->url);
         }
+
+        $blocks[] = [
+            'type' => 'image',
+            'title' => [
+                'type' => 'plain_text',
+                'text' => $item->title,
+                "emoji" => true
+            ],
+            'image_url' => $attachment->url,
+            'alt_text' => $item->url
+        ];
     }
 
+    // line
     $blocks[] = [
         'type' => 'divider'
     ];
