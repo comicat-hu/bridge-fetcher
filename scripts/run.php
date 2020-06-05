@@ -3,8 +3,6 @@
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . './utils.php';
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 use Dotenv\Dotenv;
 use JoliCode\Slack\ClientFactory;
 
@@ -15,7 +13,7 @@ $dotenv = Dotenv::create(__DIR__)->load();
 function putLog(string $log='')
 {
     $sysTime = date('Y-m-d H:i:s');
-    $logDir = getEnv('LOG_DIR');
+    $logDir = getcwd() . getEnv('LOG_DIR');
     $filename = date('Ymd') . '.log';
     
     if (!is_dir($logDir)) {
