@@ -13,6 +13,9 @@ echo '<html><body>';
 $scriptName = basename(__FILE__);
 
 $logDir = __DIR__ . '/scripts/'. getEnv('LOG_DIR');
+if (!is_dir($logDir)) {
+    die("'{$logDir}' not exists.");
+}
 
 if (isset($_GET['f']) && !empty($_GET['f'])) {
     echo "<a href='./{$scriptName}'>Back</a><br><hr>";
