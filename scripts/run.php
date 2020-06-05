@@ -13,7 +13,7 @@ $dotenv = Dotenv::create(__DIR__)->load();
 function putLog(string $log='')
 {
     $sysTime = date('Y-m-d H:i:s');
-    $logDir = getcwd() . getEnv('LOG_DIR');
+    $logDir = __DIR__ . getEnv('LOG_DIR');
     $filename = date('Ymd') . '.log';
     
     if (!is_dir($logDir)) {
