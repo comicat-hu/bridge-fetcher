@@ -4,6 +4,8 @@ fetch rss-bridge json data and send to slack
 
 ## note
 
+PHP 7.0+
+
 Run `composer install` before you run scripts.
 
 Make sure the folder where logs and scripts are stored has write permission.
