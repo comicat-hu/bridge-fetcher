@@ -16,12 +16,16 @@ $logDir = getcwd() . getEnv('LOG_DIR');
 
 if (isset($_GET['f']) && !empty($_GET['f'])) {
     echo "<a href='./{$scriptName}'>Back</a><br><hr>";
-    $logfile = $_GET['f'];
-    $log = file_get_contents($logDir . $logfile);
-    //$log = str_replace("\n", '<br>', $log);
-    echo '<pre>';
-    echo htmlspecialchars($log);
-    echo '</pre>';
+    $logfile = $logDir . $_GET['f'];
+    if (!file_exists($logfile)) {
+        echo 'File not exists.';
+    } else {
+        $log = file_get_contents($logfile);
+        //$log = str_replace("\n", '<br>', $log);
+        echo '<pre>';
+        echo htmlspecialchars($log);
+        echo '</pre>';
+    }
 } else {
     $dir = scandir($logDir);
     foreach ($dir as $name) {
