@@ -1,7 +1,7 @@
 <?php
 
-require __DIR__ . '/../vendor/autoload.php';
-require __DIR__ . './utils.php';
+require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/utils.php';
 
 use Dotenv\Dotenv;
 use JoliCode\Slack\ClientFactory;
@@ -13,11 +13,11 @@ $dotenv = Dotenv::create(__DIR__)->load();
 function putLog(string $log='')
 {
     $sysTime = date('Y-m-d H:i:s');
-    $logDir = __DIR__ . getEnv('LOG_DIR');
+    $logDir = getEnv('LOG_DIR');
     $filename = date('Ymd') . '.log';
     
     if (!is_dir($logDir)) {
-      mkdir($logDir);
+        mkdir($logDir);
     }
     
     file_put_contents(

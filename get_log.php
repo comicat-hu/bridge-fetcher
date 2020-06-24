@@ -12,7 +12,7 @@ echo '<html><body>';
 
 $scriptName = basename(__FILE__);
 
-$logDir = __DIR__ . '/scripts/'. getEnv('LOG_DIR');
+$logDir = getEnv('LOG_DIR');
 if (!is_dir($logDir)) {
     die("'{$logDir}' not exists.");
 }
