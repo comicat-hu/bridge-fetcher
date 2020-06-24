@@ -15,3 +15,4 @@ Scripts will create a file called `recentFetchTime.tmp` to check if the messages
 ## refs
 
 * https://github.com/RSS-Bridge/rss-bridge
+(make sure install release >= 2020-02-26, and enable 'direct_links=on')
