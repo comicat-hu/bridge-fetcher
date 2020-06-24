@@ -30,20 +30,24 @@ function putLog(string $log='')
 function postMessage($item)
 {
     $client = ClientFactory::create(getEnv('SLACK_TOKEN'));
-    $response = $client->chatPostMessage([
+    $messageContent = [
         'username' => getEnv('SLACK_USERNAME'),
         'channel' => getEnv('SLACK_CHANNEL_ID'),
         'text' => $item->url, // 有blocks時，text會轉成只出現在通知文字
         'unfurl_links' => false,
         'icon_emoji' => getEnv('SLACK_ICON_EMOJI'),
         'blocks' => json_encode(createBlocks($item))
+    ];
 
-    ]);
+    $response = $client->chatPostMessage($messageContent);
 
     if (!$response->getOk()) {
         putLog('***Failed post messages***');
         putLog(json_encode($response));
+        putLog('message content: ' . print_r($messageContent, TRUE));
     }
+
+    return $response->getOk();
 }
 
 function createBlocks($item)
@@ -114,9 +118,10 @@ try {
                     if (!empty($item)) {
                         $author = $item->author->name ?? $username;
                         putLog($item->url . " ({$author})");
-                        postMessage($item);
                         $postsCount++;
-                        $messageCount++;
+                        if (postMessage($item)) {
+                            $messageCount++;
+                        }
                     } else {
                         putLog("***item null from '{$content->feed_url}'***");
                         putLog(json_encode($item));
@@ -129,7 +134,7 @@ try {
             putLog("***empty content from '{$target}'***");
         }
     }
-    putLog("send $messageCount messages totally.");
+    putLog("success send $messageCount messages totally.");
 } catch (Exception $ex) {
     putLog('***Script failed with exception***');
     putLog($ex->getMessage());
