@@ -62,8 +62,10 @@ function createBlocks($item)
     ];
 
     foreach ($item->attachments as $attachment) {
+        // 此格式多為影片，slack block暫不支援
         if ($attachment->mime_type == 'application/octet-stream') {
-            $attachment->url = getLastUrl($attachment->url);
+            // $attachment->url = getLastUrl($attachment->url);
+            continue;
         }
 
         $blocks[] = [
