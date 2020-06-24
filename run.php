@@ -106,32 +106,34 @@ try {
 
     $mainUrl = getEnv('BRIDGE_MAIN_URL');
     $maxRecentPosts = getEnv('MAX_RECENT_POSTS');
+    $latestMode = filter_var(getEnv('LATEST_MODE'), FILTER_VALIDATE_BOOLEAN);
 
     $messageCount = 0;
     foreach ($followList as $username) {
         $target = $mainUrl . $username;
         $content = json_decode(file_get_contents($target));
         $postsCount = 0;
-        if (!empty($content->items)) {
+        if (empty($content->items)) {
+            putLog("***empty content from '{$target}'***");
+        } else {
             foreach ($content->items as $item) {
-                if ($postsCount < $maxRecentPosts && strtotime($item->date_modified) > getRecentFetchTime()) {
-                    if (!empty($item)) {
+                $checkedLatest = $latestMode ? true : strtotime($item->date_modified) > getRecentFetchTime();
+                if ($postsCount < $maxRecentPosts && $checkedLatest) {
+                    if (empty($item)) {
+                        putLog("***item null from '{$content->feed_url}'***");
+                        putLog(json_encode($item));
+                    } else {
+                        $postsCount++;
                         $author = $item->author->name ?? $username;
                         putLog($item->url . " ({$author})");
-                        $postsCount++;
                         if (postMessage($item)) {
                             $messageCount++;
                         }
-                    } else {
-                        putLog("***item null from '{$content->feed_url}'***");
-                        putLog(json_encode($item));
                     }
 
                     sleep(2);
                 }
             }
-        } else {
-            putLog("***empty content from '{$target}'***");
         }
     }
     putLog("success send $messageCount messages totally.");
