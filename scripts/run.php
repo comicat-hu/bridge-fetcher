@@ -112,7 +112,8 @@ try {
             foreach ($content->items as $item) {
                 if ($postsCount < $maxRecentPosts && strtotime($item->date_modified) > getRecentFetchTime()) {
                     if (!empty($item)) {
-                        putLog($item->url . " ($username)");
+                        $author = $item->author->name ?? $username;
+                        putLog($item->url . " ({$author})");
                         postMessage($item);
                         $postsCount++;
                         $messageCount++;
