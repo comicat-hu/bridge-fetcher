@@ -4,7 +4,7 @@ require __DIR__ . './vendor/autoload.php';
 
 use Dotenv\Dotenv;
 
-$dotenv = Dotenv::create(__DIR__ . '/scripts')->load();
+$dotenv = Dotenv::create(__DIR__)->load();
 
 header("Content-Type:text/html; charset=utf-8");
 
