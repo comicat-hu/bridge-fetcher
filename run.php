@@ -34,7 +34,7 @@ function postMessage($item)
         'username' => getEnv('SLACK_USERNAME'),
         'channel' => getEnv('SLACK_CHANNEL_ID'),
         'text' => $item->url, // 有blocks時，text會轉成只出現在通知文字
-        'unfurl_links' => false,
+        'unfurl_links' => true,
         'icon_emoji' => getEnv('SLACK_ICON_EMOJI'),
         'blocks' => json_encode(createBlocks($item))
     ];
