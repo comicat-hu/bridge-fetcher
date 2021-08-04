@@ -30,7 +30,7 @@ if (isset($_GET['f']) && !empty($_GET['f'])) {
         echo '</pre>';
     }
 } else {
-    $dir = scandir($logDir);
+    $dir = scandir($logDir, 1);
     foreach ($dir as $name) {
         if (preg_match('/.log$/', $name)) {
             echo '[' . date("Y-m-d H:i:s", filemtime($logDir . $name)) . '] ';
